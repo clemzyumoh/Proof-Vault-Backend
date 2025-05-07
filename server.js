@@ -17,13 +17,23 @@ connectDB();
 const app = express();
 
 
-//app.use(cors());
+// ✅ Domains allowed to access your backend
+const allowedOrigins = [
+  "https://proof-vault.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    allowedHeaders: ["Content-Type", "Authorization", "x-wallet-address"],
-    // Allow custom
-    origin: "https://proof-vault.vercel.app", // replace with actual domain
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "x-wallet-address"],
   })
 );
 
